@@ -1,0 +1,27 @@
+{
+    "name": "nexpress-auth",
+    "version": "0.0.1",
+    "description": "Authentication mechanism, not dependent on any middleware",
+    "main": "sessions.js",
+    "scripts": {
+        "test": "mocha test.js -R list",
+        "preinstall": "npm install ~/Github/node-simple-sessions"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NucleaPeon/nexpress-auth.git"
+    },
+    "keywords": [
+        "nodejs",
+        "authentication"
+    ],
+    "author": "Angry Coders <daniel.kettle@angrycoders.com>",
+    "license": "ISC",
+    "homepage": "http://www.angrycoders.com",
+    "dependencies": {
+    },
+    "devDependencies": {
+        "superagent": "*",
+        "expect.js": "*"
+    }
+}
