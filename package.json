@@ -1,11 +1,10 @@
 {
     "name": "nexpress-auth",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Authentication mechanism, not dependent on any middleware",
     "main": "sessions.js",
     "scripts": {
-        "test": "mocha test.js -R list",
-        "preinstall": "npm install ~/Github/node-simple-sessions"
+        "test": "mocha test.js -R list"
     },
     "repository": {
         "type": "git",
@@ -19,6 +18,7 @@
     "license": "ISC",
     "homepage": "http://www.angrycoders.com",
     "dependencies": {
+        "node-simple-sessions": "NucleaPeon/node-simple-sessions"
     },
     "devDependencies": {
         "superagent": "*",
