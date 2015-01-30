@@ -2,25 +2,33 @@
  * Authenticate a user using an authentication scheme
  *
  */
-var dummyAuth = require('./auths/dummy.js')();
-var sessions = require('node-simple-sessions');
+var func = require('function.create');
 var secretToken = 'asldjfljk3j42509880958749u5436jkkjHJESH';
 
-this.auth = function(username, password, success, failure) {
-    var allowed = dummyAuth(username, password);
-    if ((success !== undefined) && allowed) {
-        sessions.create(secretToken);
-        sessions.set(secretToken, 'username', username);
-        sessions.set(secretToken, 'password', password);
-        console.log("last login: " + sesssions.get(secretToken, 'lastLogin'));
-        sessions.set(secretToken, 'lastLogin', new Date());
-        success();
-    }
-    else {
-        if (failure !== undefined)
-            failure();
-    }
+(function() {
 
-}
+    var auth = function(sessions) {
 
-module.export = this.auth;
+        this.dummyAuth = function() {
+            return Function.create(null, function(req, res, data) {
+                var dummy = require('./auths/dummy.js')();
+
+                console.log("Dummy auth created for User1");
+                var username = data.username;
+                var password = data.password;
+                var allowed = dummy(username, password);
+                console.log(allowed);
+                if (allowed) {
+                    sessions.create(secretToken);
+                    sessions.set(secretToken, 'username', username);
+                    sessions.set(secretToken, 'password', password);
+                    console.log("last login: " + sessions.get(secretToken, 'lastLogin'));
+                    sessions.set(secretToken, 'lastLogin', new Date());
+                }
+            });
+        }
+        return this;
+    };
+    module.exports = auth;
+
+})();
