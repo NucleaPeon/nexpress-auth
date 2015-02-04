@@ -13,8 +13,6 @@ var t = {};
     var auth = function(template) {
 
         t = (template !== undefined) ? template : {};
-        console.log("Authenticating with session variable");
-        console.log(t);
 
         this.dummyAuth = function(sessions, sucessfulRedirect, failureRedirect) {
 
