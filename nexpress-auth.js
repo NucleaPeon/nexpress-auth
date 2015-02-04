@@ -22,7 +22,6 @@ var t = {};
             return Function.create(null, function(req, res, data) {
                 // TODO: use req/res to create unique session id?
                 var cookies = new Cookies(req, res);
-                console.log("Locking session");
                 cookies.set("session_id", secretToken, {httpOnly: true});
                 var dummy = require('./auths/dummy.js')();
 
@@ -50,7 +49,6 @@ var t = {};
             return Function.create(null, function(req, res, data) {
                 // TODO: use req/res to create unique session id?
                 var cookies = new Cookies(req, res);
-                console.log("Locking session");
                 cookies.set("session_id", secretToken, {httpOnly: true});
                 var forms = require("./auths/forms.js")();
                 var allowed = forms(data, formExpected);
