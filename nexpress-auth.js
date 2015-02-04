@@ -3,20 +3,28 @@
  *
  */
 var func = require('function.create');
-var cookies = require('cookies');
+var Cookies = require('cookies');
 
 var secretToken = 'asldjfljk3j42509880958749u5436jkkjHJESH';
+var t = {};
 
 (function() {
 
-    var auth = function(sessions) {
+    var auth = function(template) {
 
-        this.dummyAuth = function(sucessfulRedirect, failureRedirect) {
+        t = (template !== undefined) ? template : {};
+        console.log("Authenticating with session variable");
+        console.log(t);
+
+        this.dummyAuth = function(sessions, sucessfulRedirect, failureRedirect) {
 
             var success = sucessfulRedirect;
             var failure = failureRedirect;
 
             return Function.create(null, function(req, res, data) {
+                // TODO: use req/res to create unique session id?
+                var cookies = new Cookies(req, res);
+                console.log("Locking session");
                 cookies.set("session_id", secretToken, {httpOnly: true});
                 var dummy = require('./auths/dummy.js')();
 
@@ -24,7 +32,7 @@ var secretToken = 'asldjfljk3j42509880958749u5436jkkjHJESH';
                 var password = data.password;
                 var allowed = dummy(username, password);
                 if (allowed) {
-                    sessions[secretToken] = {};
+                    sessions[secretToken] = t;
                     sessions[secretToken]['username'] = username;
                     sessions[secretToken]['password'] = password;
                     sessions[secretToken]['lastLogin'] = new Date();
@@ -37,20 +45,25 @@ var secretToken = 'asldjfljk3j42509880958749u5436jkkjHJESH';
             });
         }
 
-        this.formAuth = function(formExpected, success, failure) {
+        this.formAuth = function(sessions, formExpected, success, failure) {
             var success = success;
             var failure = failure;
 
             return Function.create(null, function(req, res, data) {
+                // TODO: use req/res to create unique session id?
+                var cookies = new Cookies(req, res);
+                console.log("Locking session");
+                cookies.set("session_id", secretToken, {httpOnly: true});
                 var forms = require("./auths/forms.js")();
                 var allowed = forms(data, formExpected);
                 if (allowed) {
-                    sessions[secretToken] = {};
+                    sessions[secretToken] = t;
                     var keys = Object.keys(data);
                     for (var i=0; i < keys.length; i++)
                         sessions[secretToken][keys[i]] = data[keys[i]];
 
                     sessions[secretToken]['lastLogin'] = new Date();
+                    console.log(sessions);
                     success(req, res, data);
                 }
                 else {

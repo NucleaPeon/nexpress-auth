@@ -1,6 +1,6 @@
 {
     "name": "nexpress-auth",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Authentication mechanism, not dependent on any middleware",
     "main": "nexpress-auth.js",
     "scripts": {
