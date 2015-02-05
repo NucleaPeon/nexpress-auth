@@ -1,6 +1,6 @@
 /**
  * Authenticate a user using an authentication scheme
- *
+ * TODO: Eliminate any results that are true because of null or undefined or NaN values
  */
 var func = require('function.create');
 var Cookies = require('cookies');
@@ -23,8 +23,8 @@ var t = {};
                 // TODO: use req/res to create unique session id?
                 var cookies = new Cookies(req, res);
                 cookies.set("session_id", secretToken, {httpOnly: true});
-                var dummy = require('./auths/dummy.js')();
 
+                var dummy = require('./auths/dummy.js')();
                 var username = data.username;
                 var password = data.password;
                 var allowed = dummy(username, password);
@@ -42,6 +42,9 @@ var t = {};
             });
         }
 
+        /**
+         * Compares the POST data with the formExpected data
+         */
         this.formAuth = function(sessions, formExpected, success, failure) {
             var success = success;
             var failure = failure;
@@ -51,21 +54,48 @@ var t = {};
                 var cookies = new Cookies(req, res);
                 cookies.set("session_id", secretToken, {httpOnly: true});
                 var forms = require("./auths/forms.js")();
-                var allowed = forms(data, formExpected);
+                var allowed = forms.auth(data, formExpected);
                 if (allowed) {
                     sessions[secretToken] = t;
                     var keys = Object.keys(data);
                     for (var i=0; i < keys.length; i++)
                         sessions[secretToken][keys[i]] = data[keys[i]];
-
                     sessions[secretToken]['lastLogin'] = new Date();
-                    console.log(sessions);
                     success(req, res, data);
                 }
                 else {
                     failure(req, res, data);
                 }
+            });
+        }
 
+        this.sessionAuth = function(sessions, expectedValues, success, failure) {
+            var success = success;
+            var failure = failure;
+
+            return Function.create(null, function(req, res) {
+                var cookies = new Cookies(req, res);
+                var secretToken = cookies.get("session_id", {httpOnly: true});
+                if (secretToken === undefined) {
+                    console.log("Secret Token Invalid");
+                    failure(req, res);
+                    return;
+                }
+                var forms = require("./auths/forms.js")();
+                if (sessions[secretToken] !== undefined) {
+                    // Cookie exists on client
+                    var allowed = forms.sauth(sessions[secretToken], expectedValues);
+                    if (allowed) {
+                        // Maybe do a "last seen" value here?
+                        success(req, res);
+                    }
+                    else {
+                        failure(req, res);
+                    }
+                }
+                else {
+                    failure(req, res);
+                }
             });
         }
 
