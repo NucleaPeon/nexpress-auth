@@ -19,8 +19,6 @@ module.exports = function() {
         var count = 0;
         try {
             for (var i=0; i < keys.length; i++) {
-                console.log(keys[i]);
-                console.log(form_data[keys[i]] ==  expected_data[keys[i]]);
                 if (compare(form_data[keys[i]], expected_data[keys[i]]) == false)
                     return false;
                 count++;

@@ -99,6 +99,24 @@ var t = {};
             });
         }
 
+        this.revoke = function(sessions, success, failure) {
+            return Function.create(null, function(req, res) {
+                var cookies = new Cookies(req, res);
+                var secretToken = cookies.get("session_id", {httpOnly: true});
+                if (secretToken === undefined) {
+                    failure(req, res);
+                    return;
+                }
+                if (sessions[secretToken] !== undefined) {
+                    delete sessions[secretToken];
+                    success(req, res);
+                }
+                else {
+                    failure(req, res)
+                }
+            });
+        }
+
 
         return this;
     };
