@@ -99,6 +99,33 @@ var t = {};
             });
         }
 
+        /**
+         * This authentication method allows success to be called
+         * when the session id found in the users cookie exists in
+         * the node.js stored session object.
+         *
+         * Basically, if user has been found to have valid authentication,
+         * this succeeds.
+         *
+         * Otherwise (no session), fail.
+         */
+        this.validcookieAuth = function(sessions, success, failure) {
+            var success = success;
+            var failure = failure;
+
+            return Function.create(null, function(req, res) {
+                var cookies = new Cookies(req, res);
+                var secretToken = cookies.get("session_id", {httpOnly: true});
+                if (sessions[secretToken] !== undefined) {
+                    success(req, res);
+                }
+                else {
+                    failure(req, res);
+                    return
+                }
+            });
+        }
+
         this.revoke = function(sessions, success, failure) {
             return Function.create(null, function(req, res) {
                 var cookies = new Cookies(req, res);
