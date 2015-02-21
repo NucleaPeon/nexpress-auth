@@ -73,12 +73,12 @@ var t = {};
             var success = success;
             var failure = failure;
 
-            return Function.create(null, function(req, res) {
+            return Function.create(null, function(req, res, data) {
                 var cookies = new Cookies(req, res);
                 var secretToken = cookies.get("session_id", {httpOnly: true});
                 if (secretToken === undefined) {
                     console.log("Secret Token Invalid");
-                    failure(req, res);
+                    failure(req, res, data);
                     return;
                 }
                 var forms = require("./auths/forms.js")();
@@ -87,14 +87,14 @@ var t = {};
                     var allowed = forms.sauth(sessions[secretToken], expectedValues);
                     if (allowed) {
                         // Maybe do a "last seen" value here?
-                        success(req, res);
+                        success(req, res, data);
                     }
                     else {
-                        failure(req, res);
+                        failure(req, res, data);
                     }
                 }
                 else {
-                    failure(req, res);
+                    failure(req, res, data);
                 }
             });
         }
@@ -113,33 +113,33 @@ var t = {};
             var success = success;
             var failure = failure;
 
-            return Function.create(null, function(req, res) {
+            return Function.create(null, function(req, res, data) {
                 var cookies = new Cookies(req, res);
                 var secretToken = cookies.get("session_id", {httpOnly: true});
                 if (sessions[secretToken] !== undefined) {
-                    success(req, res);
+                    success(req, res, data);
                 }
-                else {
-                    failure(req, res);
+                else {data
+                    failure(req, res, data);
                     return
                 }
             });
         }
 
         this.revoke = function(sessions, success, failure) {
-            return Function.create(null, function(req, res) {
+            return Function.create(null, function(req, res, data) {
                 var cookies = new Cookies(req, res);
                 var secretToken = cookies.get("session_id", {httpOnly: true});
                 if (secretToken === undefined) {
-                    failure(req, res);
+                    failure(req, res, data);
                     return;
                 }
                 if (sessions[secretToken] !== undefined) {
                     delete sessions[secretToken];
-                    success(req, res);
+                    success(req, res, data);
                 }
                 else {
-                    failure(req, res)
+                    failure(req, res, data)
                 }
             });
         }
